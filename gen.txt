@@ -1,0 +1,29 @@
+def genetic_algorithm():
+    """Main Genetic Algorithm function."""
+    population = generate_random_population()
+    generations = 0
+    while generations < MAX_GENERATIONS:
+        print("Generation", generations)
+        for board in population:
+            print(board)
+        new_population = []
+        for _ in range(POPULATION_SIZE):
+            parent1 = select_parent(population)
+            parent2 = select_parent(population)
+            child = crossover(parent1, parent2)
+            child = mutate(child)
+            new_population.append(child)
+        population = new_population
+        generations += 1
+        # Check if optimal solution with 28 non-conflicts is found
+        for board in population:
+            if calculate_fitness(board) == 28:
+                print("Optimal solution found!")
+                print(board)
+                return
+
+    print("No optimal solution found.")
+
+
+# Run the genetic algorithm
+genetic_algorithm()

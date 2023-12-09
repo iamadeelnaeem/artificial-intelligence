@@ -1,0 +1,65 @@
+import random
+
+# Generate a random initial state
+def generate_initial_state():
+    return [random.randint(0, 7) for _ in range(8)]
+
+# Calculate the number of conflicts for a given state
+def calculate_conflicts(state):
+    conflicts = 0
+    for i in range(len(state)):
+        for j in range(i + 1, len(state)):
+            if state[i] == state[j] or abs(state[i] - state[j]) == abs(i - j):
+                conflicts += 1
+    return conflicts
+
+# Generate all possible successor states by moving a queen to a different row in its column
+def generate_successors(state):
+    successors = []
+    for col in range(8):
+        for row in range(8):
+            if state[col] != row:
+                successor = list(state)
+                successor[col] = row
+                successors.append(successor)
+    return successors
+
+# Select the best successor state based on the heuristic function
+def select_best_successor(successors):
+    best_successor = successors[0]
+    best_conflicts = calculate_conflicts(best_successor)
+    for successor in successors:
+        conflicts = calculate_conflicts(successor)
+        if conflicts < best_conflicts:
+            best_successor = successor
+            best_conflicts = conflicts
+    return best_successor
+
+# Solve the 8-Queens problem using the Hill Climbing algorithm
+def solve_eight_queens():
+
+    current_state = generate_initial_state()
+
+    print(f"Initial State = {current_state}")
+    current_conflicts = calculate_conflicts(current_state)
+    print(f"Initial State Conflict={current_conflicts}")
+
+    while current_conflicts > 0:
+        successors = generate_successors(current_state)
+        best_successor = select_best_successor(successors)
+        if calculate_conflicts(best_successor) >= current_conflicts:
+            # Reached a local maximum, restart with a new random state
+            current_state = generate_initial_state()
+        else:
+            current_state = best_successor
+            current_conflicts = calculate_conflicts(best_successor)
+
+    return current_state
+
+# Run the algorithm and print the solution
+solution = solve_eight_queens()
+print(f"Solution={solution}")
+#for row in range(8):
+    #line = ['Q' if solution[col] == row else '.' for col in range(8)]
+   # print(' '.join(line))
+
